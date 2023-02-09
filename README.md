@@ -5,7 +5,7 @@
 
 - [Description](#description)
 - [How To Use](#how-to-use)
-- [Find a Bug?](#find-a-bug?)
+- [Find A Bug ?](#find-a-bug)
 - [License](#license)
 - [Author Info](#author-info)
 
@@ -90,7 +90,7 @@ Code in [CodeSanbox](https://codesandbox.io/s/mystifying-lena-zcoecg?file=/src/A
 
 ---
 
-## Find a bug?
+## Find a bug
 
 If you found an issue or would like to submit an improvement to this project, please submit an issue using the issues tab above. If you would like to submit a PR with a fix, reference the issue you created!
 
