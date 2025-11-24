@@ -1,16 +1,19 @@
 # React Firework
 
 ---
+
 ### Table of Contents
 
 - [Description](#description)
 - [How To Use](#how-to-use)
-- [Find A Bug ?](#find-a-bug)
+- [Find a Bug?](#find-a-bug)
 - [License](#license)
 - [Author Info](#author-info)
 
 ## Description
-This is a component to generate a fireworks animation, you will change the custom parameters to get the effect you prefer.
+
+This is a React component that generates a fireworks animation using an HTML5 canvas.  
+You can customize several parameters to get the effect you prefer.
 
 ---
 
@@ -18,73 +21,138 @@ This is a component to generate a fireworks animation, you will change the custo
 
 #### Installation
 
-````html
-    npm i react-firework
-````
+```bash
+npm i react-firework
+```
 
 #### Import
 
-````html
-    import Firework from 'react-firework'
-````
-**Note: You can use the name you prefer.**
+```js
+import { Firework, RandomFirework } from 'react-firework'
+```
 
 #### Add to your code
 
-````html
-    <Firework />
-````
+```jsx
+<Firework playExploud={play} />
+```
 
 #### Variables and Params
 
-* `amount`: The amount of particles to be exploded in the fireworks. `Default = 80`
-* `color`: The color of particles. You must pass text as param. You can pass RGB, HEX, HSL, HWB or Text. For Example: 'rgb(0,0,255)', '#0000ff', 'hsl(240,100%,50%)', 'hwb(240,0,0)', or 'blue'. `Default = red`
-* `dropShadow`: You can set the drop shadow to `true` or turn it off with `false`. `Default= false`
-* `maxWidth`: This is the maximum width value that the particle can have. Small recomended. `Default= 8`
-* `maxHeight`: This is the maximum height value that the particle can have. Small recomended. `Default= 8`
-* `maxDistanceX`: This is the maximum distance in X that the particle can travel. `Default= 80`
-* `maxDistanceY`: This is the maximum distance in Y that the particle can travel.  `Default= 80`
-* `maxTime`: This is the maximum time for the animation. `Default = 3`
-* `playExploud`: Required `true` for generete the exploud, and `false` for reset the animation. `Default= false`
+**Firework props (canvas)**
+
+- `playExploud`: `boolean`. Set to `true` to launch a firework explosion. When you set it back to `false` you can trigger a new launch. `Default = false`
+- `amount`: `number`. Amount of particles to be exploded in the fireworks. `Default = 80`
+- `colors`: `string | string[]`. Color or list of colors for the particles. You can pass RGB, HEX, HSL, HWB or text values. For example: `'rgb(0,0,255)'`, `'#0000ff'`, `'hsl(240,100%,50%)'`, `'hwb(240,0,0)'`, or `'blue'`. `Default = ["red", "orange", "yellow"]`
+- `width`: `number`. Canvas width in pixels. `Default = 300`
+- `height`: `number`. Canvas height in pixels. `Default = 300`
+- `maxRadius`: `number`. Maximum radius (size) of each particle in pixels. `Default = 3`
+- `maxTime`: `number`. Maximum life time of the particles in seconds. `Default = 1.5`
+- `gravity`: `number`. Gravity factor applied to particles movement (higher values make particles fall faster). `Default = 0.0004`
+
+**RandomFirework props**
+
+- `playExploud`: `boolean`. When `true`, launches a sequence of random fireworks.
+- `amountRandom`: `number`. How many explosions to launch in that sequence. `Default = 3`
 
 #### Example Code
 
-````html
-import "./styles.css";
-import Firework from "react-firework";
-import { useState } from "react";
+```jsx
+import './styles.css'
+import { Firework, RandomFirework } from 'react-firework'
+import { useState } from 'react'
 
 export default function App() {
-  const [play, setPlay] = useState(false);
-  const handleClick = () => {
-    setPlay(true);
-    setTimeout(() => {
-      setPlay(false);
-    }, 1000);
-  };
-  return (
-    <div className="App">
-      <h1>React Firework</h1>
-      <button onClick={handleClick}>
-        <Firework
-          amount={250}
-          color={'orange'}
-          dropShadow={true}
-          maxHeight={5}
-          maxWidth={5}
-          maxDistanceX={300}
-          maxDistanceY={300}
-          maxTime={4}
-          playExploud={play}
-        />
-        Play
-      </button>
-    </div>
-  );
-}
-````
+  const [playSingle, setPlaySingle] = useState(false)
+  const [playRandom, setPlayRandom] = useState(false)
 
-Code in [CodeSanbox](https://codesandbox.io/s/mystifying-lena-zcoecg?file=/src/App.js)
+  const handleSingle = () => {
+    setPlaySingle(true)
+    setTimeout(() => {
+      setPlaySingle(false)
+    }, 500)
+  }
+
+  const handleRandom = () => {
+    setPlayRandom(true)
+    setTimeout(() => {
+      setPlayRandom(false)
+    }, 500)
+  }
+
+  return (
+    <div className='App'>
+      <h1>React Firework (canvas)</h1>
+
+      <button onClick={handleSingle}>Launch single firework</button>
+      <Firework
+        playExploud={playSingle}
+        amount={150}
+        colors={['#ffdd55', '#ff8800', '#ff4444']}
+        width={400}
+        height={400}
+      />
+
+      <button onClick={handleRandom}>Launch random sequence</button>
+      <RandomFirework playExploud={playRandom} amountRandom={5} />
+    </div>
+  )
+}
+```
+
+#### Fullscreen example (100% of the viewport)
+
+If you want the firework to fill the whole screen, you can use the window size as the canvas size:
+
+```jsx
+import { useState, useEffect } from 'react'
+import { Firework } from 'react-firework'
+
+export default function FullscreenFirework() {
+  const [play, setPlay] = useState(false)
+  const [size, setSize] = useState({
+    w: window.innerWidth,
+    h: window.innerHeight,
+  })
+
+  useEffect(() => {
+    const onResize = () => {
+      setSize({
+        w: window.innerWidth,
+        h: window.innerHeight,
+      })
+    }
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
+  const handleClick = () => {
+    setPlay(true)
+    setTimeout(() => setPlay(false), 500)
+  }
+
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        width: '100vw',
+        height: '100vh',
+        pointerEvents: 'none',
+      }}
+      onClick={handleClick}
+    >
+      <Firework
+        playExploud={play}
+        width={size.w}
+        height={size.h}
+        amount={200}
+        colors={['#ffffff', '#ffdd55', '#ff4444']}
+      />
+    </div>
+  )
+}
+```
 
 [Back To The Top](#react-firework)
 
@@ -123,6 +191,5 @@ in Instagram as [@nahuelorselli.jsx](https://www.instagram.com/nahuelorselli.jsx
 in Twitter as [@OrselliNahuel](https://twitter.com/OrselliNahuel)
 
 in GitHub [Nahuel Orselli](https://github.com/NahuelOrselli)
-
 
 [Back To The Top](#react-firework)
