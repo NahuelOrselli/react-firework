@@ -13,6 +13,12 @@ export function useParticle({
   const particlesRef = useRef([])
   const shootRef = useRef(null)
 
+  // Keep refs in sync with props
+  const propsRef = useRef({ amount, maxRadius, maxTime, colors, gravity })
+  useEffect(() => {
+    propsRef.current = { amount, maxRadius, maxTime, colors, gravity }
+  }, [amount, maxRadius, maxTime, colors, gravity])
+
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -34,6 +40,7 @@ export function useParticle({
 
       ctx.clearRect(0, 0, width, height)
       const alive = []
+      const { gravity } = propsRef.current
 
       for (const particle of particles) {
         particle.age += delta
@@ -63,6 +70,7 @@ export function useParticle({
     }
 
     shootRef.current = () => {
+      const { amount, maxRadius, maxTime, colors } = propsRef.current
       const centerX = width / 2
       const centerY = height / 2
       const next = particlesRef.current.slice()
@@ -99,7 +107,7 @@ export function useParticle({
       if (animationId) cancelAnimationFrame(animationId)
       particlesRef.current = []
     }
-  }, [amount, maxRadius, maxTime, colors, width, height, gravity])
+  }, [width, height]) // Only re-run if canvas size changes
 
   const shoot = useCallback(() => {
     if (shootRef.current) shootRef.current()

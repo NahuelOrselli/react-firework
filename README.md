@@ -54,6 +54,8 @@ import { Firework, RandomFirework } from 'react-firework'
 
 - `playExploud`: `boolean`. When `true`, launches a sequence of random fireworks.
 - `amountRandom`: `number`. How many explosions to launch in that sequence. `Default = 3`
+- `width`: `number`. Canvas width in pixels. `Default = 300`
+- `height`: `number`. Canvas height in pixels. `Default = 300`
 
 #### Example Code
 
