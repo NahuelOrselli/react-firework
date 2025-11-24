@@ -77,15 +77,39 @@ export function useParticle({
 
       for (let i = 0; i < amount; i++) {
         const angle = Math.random() * 2 * Math.PI
-        const speed = Math.random() * 0.3 + 0.05
-        const life = (Math.random() * (maxTime - 0.3) + 0.3) * 1000
+        
+        // 12% of particles are "center fill" particles that move slowly
+        const isCenterParticle = Math.random() < 0.12
+        
+        let speed, life, startOffset
+        
+        if (isCenterParticle) {
+          // Slow particles that stay near center
+          speed = Math.random() * 0.08 + 0.01 // Very slow: 0.01 to 0.09
+          life = (Math.random() * 0.5 + 0.8) * 1000 // Live longer: 0.8-1.3s
+          startOffset = Math.random() * 1 // Start very close to center
+        } else {
+          // Fast particles that create the outer burst
+          const speedVariation = Math.pow(Math.random(), 0.7) // Bias towards higher speeds
+          speed = speedVariation * 0.5 + 0.1 // Range: 0.1 to 0.6
+          
+          // Vary particle lifetime more dramatically
+          const lifeVariation = Math.random()
+          life = (lifeVariation * (maxTime - 0.5) + 0.5) * 1000
+          
+          startOffset = Math.random() * 2 // Start slightly offset
+        }
+        
         const color = Array.isArray(colors)
           ? colors[Math.floor(Math.random() * colors.length)]
           : colors
 
+        // Add slight randomness to starting position to avoid perfect center
+        const offsetAngle = Math.random() * 2 * Math.PI
+        
         next.push({
-          x: centerX,
-          y: centerY,
+          x: centerX + Math.cos(offsetAngle) * startOffset,
+          y: centerY + Math.sin(offsetAngle) * startOffset,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed,
           age: 0,
